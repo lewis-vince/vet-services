@@ -1,7 +1,8 @@
 version: '3.7'
 services:
-  db:
+  vet-services-db:
     image: mysql:5.7
+    container_name: "vet-services-db"
     restart: always
     command: --init-file /data/application/init.sql
     environment:
@@ -22,6 +23,18 @@ services:
     volumes:
       - my-db:/var/lib/mysql
       - ./mysql-init.sql:/data/application/init.sql
-# Names our volume
+
+  audit-db:
+    image: mongo:latest
+    container_name: "audit-db"
+    ports:
+      - 27017:27017
+    command: mongod
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+      - MONGODB_USER="user"
+      - MONGODB_PASS="pass"
+
 volumes:
   my-db:
