@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vet-services-deployment
+  labels:
+    app: vet-services
+spec:
+  ports: 3306
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vet-services
+  template:
+    metadata:
+      labels:
+        app: vet-services
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:1.7.9
+          env:
+            # Use secret in real usage
+            - name: MYSQL_ROOT_PASSWORD
+              value: password
+          ports:
+            - containerPort: 3306
