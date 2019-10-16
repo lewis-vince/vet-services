@@ -36,5 +36,14 @@ services:
       - MONGODB_USER="user"
       - MONGODB_PASS="pass"
 
+  appointment-service:
+    image: appointment-service:2
+    container_name: appointment-service
+    ports:
+      - 8080:8080
+    expose:
+      - '8080'
+
+
 volumes:
   my-db:
