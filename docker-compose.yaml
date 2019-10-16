@@ -24,26 +24,17 @@ services:
       - my-db:/var/lib/mysql
       - ./mysql-init.sql:/data/application/init.sql
 
-  audit-db:
-    image: mongo:latest
-    container_name: "audit-db"
-    ports:
-      - 27017:27017
-    command: mongod
-    environment:
-      - MONGO_DATA_DIR=/data/db
-      - MONGO_LOG_DIR=/dev/null
-      - MONGODB_USER="user"
-      - MONGODB_PASS="pass"
-
-  appointment-service:
-    image: appointment-service:2
-    container_name: appointment-service
-    ports:
-      - 8080:8080
-    expose:
-      - '8080'
-
+#  audit-db:
+#    image: mongo:latest
+#    container_name: "audit-db"
+#    ports:
+#      - 27017:27017
+#    command: mongod
+#    environment:
+#      - MONGO_DATA_DIR=/data/db
+#      - MONGO_LOG_DIR=/dev/null
+#      - MONGODB_USER="user"
+#      - MONGODB_PASS="pass"
 
 volumes:
   my-db:
