@@ -4,7 +4,7 @@ This repository contains an example of a Spring Boot application that provides d
 
 The application is deployable bare-metal, in a container locally, or in a kubernetes cluster.
 
-##Running Locally
+###Running Locally
 
 This application requires a MySQL db to be accessible with tables configured for the entities it uses.
 There is a docker-compose file that will give your local machine all the dependencies it needs to run the services locally in an IDE, if you have docker installed then run the following:
