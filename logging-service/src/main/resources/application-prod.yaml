@@ -1,0 +1,9 @@
+spring:
+  data:
+    mongodb:
+      host: audit-db
+      port: 27017
+      database: logs
+
+server:
+  port: 80

@@ -14,7 +14,7 @@ public class RequestResponse {
     private Object response;
 
     public RequestResponse() {
-
+        id = UUID.randomUUID();
     }
 
     public RequestResponse(UUID id, LogRequest request, Object response) {

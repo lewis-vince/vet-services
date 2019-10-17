@@ -41,6 +41,38 @@ spec:
 
 ---
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audit-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audit-db
+      tier: database
+      db-conn: audit-db
+  template:
+    metadata:
+      labels:
+        app: audit-db
+        tier: database
+        db-conn: audit-db
+    spec:
+      hostname: audit-db
+      containers:
+        - name: audit-db
+          image: mongo:latest
+          env:
+            - name: MONGO_DATA_DIR
+              value: "/data/db"
+            - name: MONGO_LOG_DIR
+              value: "/dev/null"
+          ports:
+            - containerPort: 27017
+
+---
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -123,17 +155,36 @@ spec:
       hostname: appointment-service
       containers:
         - name: appointment-service
-          image: appointment-service:4
+          image: appointment-service:1
           imagePullPolicy: IfNotPresent
-          env:
-            - name: MYSQL_DATABASE
-              value: 'db'
-            - name: MYSQL_USER
-              value: 'user'
-            - name: MYSQL_PASSWORD
-              value: 'user'
-            - name: MYSQL_ROOT_PASSWORD
-              value: password
+          ports:
+            - containerPort: 80
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logging-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logging-service
+      tier: service
+      db-conn: audit-db
+  template:
+    metadata:
+      labels:
+        app: logging-service
+        tier: service
+        db-conn: audit-db
+    spec:
+      hostname: logging-service
+      containers:
+        - name: logging-service
+          image: logging-service:1
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
 
@@ -152,6 +203,23 @@ spec:
       port: 3306
       targetPort: 3306
   type: LoadBalancer
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: audit-db
+spec:
+  selector:
+    tier: database
+    db-conn: audit-db
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+  type: LoadBalancer
+
 ---
 
 apiVersion: v1
@@ -161,6 +229,23 @@ metadata:
 spec:
   selector:
     tier: service
+    app: appointment-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: logging-service
+spec:
+  selector:
+    tier: service
+    app: logging-service
   ports:
     - protocol: TCP
       port: 80
